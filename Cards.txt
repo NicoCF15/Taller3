@@ -22,10 +22,10 @@ Battlefield Worshop,KJASD53,Lengendary,5.3
 Video Game Worshop,PAWOEY7,Epic,7.5
 Fabian Rojas,286FR14X,Data Structure,3.8,0
 Juan Quispe,HJL857G,Programming of Computer,5,0
-Javier Muñoz,09LDJ65,Database,3.9,0
+Javier Munoz,09LDJ65,Database,3.9,0
 Joaquin Solano,98JAS6D,Programming of Computer,4.1,0
 Pablo Salas,8HSD63F,Database,2.1,0
-Sebastían Villarroel,AJ87DH3,Programming of Computer,1,0
+Sebastian Villarroel,AJ87DH3,Programming of Computer,1,0
 Juan Maury,H3SO84J,Programming Language,3.2,0
 Alvaro Castillo,BC79KJ,Programming of Computer,3.9,0
 Tomas Reimann,79JH64D,Computer Architecture,4.8,0

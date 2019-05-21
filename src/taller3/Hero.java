@@ -13,11 +13,17 @@ public class Hero {
     private String alias;
     private Deck deck;
     private double hp;
-
+    private double damageDealt;
+            
     public Hero(String alias,Deck deck) {
         this.alias = alias;
         this.hp = 15;
         this.deck=deck;
+        damageDealt=0;
+    }
+
+    public double getDamageDealt() {
+        return damageDealt;
     }
 
     public String getAlias() {
@@ -42,6 +48,9 @@ public class Hero {
         else{
            hp= hp-damage; 
         }
+    }
+    public void dealDamage(double damage){
+        damageDealt= damageDealt + damage;
     }
     
     

@@ -11,12 +11,13 @@ package taller3;
  */
 public interface GameSystem {
     
-    public boolean chooseYourCards(int player);
-    public void showDuelOptions();
+    public Deck chooseYourCards(int player);
+    public int showDuelOptions();
     public void useWarrior(int player);
     public void useGuardian(int player);
     public void useSpell(int player);
     public boolean findCardGame(String id);
     public void heroesThatParticipated();
     public void detailsOfLastCombat();  
+    public void gameTurns();
 }

@@ -14,7 +14,7 @@ public class Spell extends Card {
     private String rarity;
     private double damage;
 
-    public Spell(String name, String id,String rarity, double damage) {
+    public Spell(String name, String id, String rarity,double damage) {
         super(name, id);
         this.rarity = rarity;
         this.damage = damage;

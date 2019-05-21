@@ -9,22 +9,41 @@ import ucn.ArchivoEntrada;
 import ucn.StdOut;
 import ucn.StdIn;
 import java.util.InputMismatchException;
-import ucn.Registro;
 import ucn.StdRandom;
+import ucn.Registro;
 /**
  *
  * @author fabianxd
  */
 public class GameSystemImpl implements GameSystem {
-    private HeroList Heroes;
+    private HeroList heroes;
     private WarriorList warriorCards;
     private GuardianList guardianCards;
     private SpellList spellCards;
     private Hero player1;
     private Hero player2;
-    /**
+    private int turn;
+     /**
      * method that open the file cards.txt and create all the cards
      */
+        public int validateGameOptions(String inputNumber){
+        try{
+            int option = Integer.parseInt(inputNumber);
+                if(option<=3 && option>0){
+                    return option;  
+                }
+                else{
+                    StdOut.println("Choose a number between the options: 1 "
+                    + "to use warrior, 2 for use spell and 3 to use guardian");
+                    return -1;
+                }
+            }
+            catch(NumberFormatException e){
+                StdOut.println("this isn't a number, please input a number, remember 1 "
+                    + "to use warrior, 2 for use spell and 3 to use guardian");
+                return -1;
+            }
+        }
     public void addCardsToTheSystem(){
         warriorCards = new WarriorList(50000);
         guardianCards = new GuardianList(50000);
@@ -39,13 +58,13 @@ public class GameSystemImpl implements GameSystem {
                 String field4 = registro.getString();
                 String field5 = registro.getString();
                 String field6 = registro.getString();
-                
+
                 if(field5 != null && field6 != null){
                     String name = field1;
                     String id = field2;
                     String rarity = field3;
                     String race = field4;
-                    double hp = Double.parseDouble(field5);;
+                    double hp = Double.parseDouble(field5);
                     double damage = Double.parseDouble(field6);
                     Warrior warrior = new Warrior(name,id,rarity,race,hp,damage);
                     warriorCards.addWarrior(warrior);
@@ -76,10 +95,23 @@ public class GameSystemImpl implements GameSystem {
     public void determinateDuelTurns(){
         StdOut.println("Player 1 enter your alias");
         String name1 = StdIn.readString();
+        Deck deck1 =chooseYourCards(1);
         //no se si es asi: Deck deck1 = chooseYourCards(Card[] cards);
+        
         StdOut.println("Player 2 enter your alias");
         String name2 = StdIn.readString();
+        while(name1.equals(name2)){
+           StdOut.println("This alias "); 
+           name2 = StdIn.readString(); 
+        }
         //no se si es asi: Deck deck1 = chooseYourCards(Card[] cards)
+        Deck deck2= chooseYourCards(2);
+        
+        player1 = new Hero(name1,deck1);
+        //heroes.addHero(player1);
+        player2 = new Hero(name2,deck2);
+        //heroes.addHero(player2);
+        
         int dice1 = StdRandom.uniform(6)+1;
         int dice2 = StdRandom.uniform(6)+1;
         while(dice1 == dice2){
@@ -87,25 +119,63 @@ public class GameSystemImpl implements GameSystem {
             dice2 = StdRandom.uniform(6)+1;
         }
         if (dice1 > dice2){
-            //Hero player1 = new Hero(name1,15,deck1,true)
-            //Hero player2 = new Hero(name2,15,deck2,false)
-            //addHeros(player1,player2);
+            turn=1;
+            StdOut.println("Player 1 starts");
         }
         else{
-            //Hero player1 = new Hero(name1,deck1,false)
-            //Hero player2 = new Hero(name2,deck2,true)
-            //addHeros(player1,player2);
+            turn=2;
+            StdOut.println("Player 2 starts");
         }
     }
-    public void Game(){
+    public void gameTurns(){
+        while(player1.getHp()>0 && player2.getHp()>0){
+            int optionSelected;
+            if(turn==1){
+                optionSelected=showDuelOptions();
+                if(optionSelected==1){
+                    useWarrior(1);
+                }
+                if(optionSelected==2){
+                    useSpell(1);
+                }
+                if(optionSelected==3){
+                    useGuardian(1);
+                }
+            }
+            if(turn==2){
+                optionSelected=showDuelOptions();
+                if(optionSelected==1){
+                    useWarrior(2);
+                }
+                if(optionSelected==2){
+                    useSpell(2);
+                }
+                if(optionSelected==3){
+                    useGuardian(2);
+                }
+            }   
+        }
+        
+        if(player1.getHp()>0 && player2.getHp()==0){
+            StdOut.println(player1.getAlias()+" has won");
+        }
+        if(player2.getHp()>0 && player1.getHp()==0){
+            StdOut.println(player2.getAlias()+" has won");
+        }
         
     }
+
+    /**
+     *
+     * @param player
+     * @return
+     */
     @Override
-    public boolean chooseYourCards(int player){
+    public Deck chooseYourCards(int player){
         Warrior warriorSelected;
         Guardian guardianSelected;
         Spell spellSelected;
-        
+        Deck newDeck;
         StdOut.println(" .:: Warriors ::. ");
         for(int i=0;i<warriorCards.getWarriorQty();i++){
             StdOut.print("[" + i + "]");
@@ -123,7 +193,7 @@ public class GameSystemImpl implements GameSystem {
                 cardSelected=StdIn.readInt();
             }catch(InputMismatchException e){
                 StdOut.println("Choose an integer");
-                return false;
+                return null;
             }
             if(cardSelected<warriorCards.getWarriorQty() && cardSelected>=0){
                 break;
@@ -133,16 +203,6 @@ public class GameSystemImpl implements GameSystem {
             }
         }
         warriorSelected=warriorCards.getWarrior(cardSelected);
-        //esto es de prueba
-        StdOut.println(warriorSelected.getName());
-        if(player==1){
-            player1.getDeck().setWarrior(warriorSelected);
-            player1.getDeck().getWarrior().cardSelected();
-        }
-        else{
-            player2.getDeck().setWarrior(warriorSelected);
-            player2.getDeck().getWarrior().cardSelected();
-        }
         
         
         StdOut.println(" .:: Guardians ::. ");
@@ -160,7 +220,7 @@ public class GameSystemImpl implements GameSystem {
                 cardSelected=StdIn.readInt();
             }catch(InputMismatchException e){
                 StdOut.println("Choose an integer");
-                return false;
+                return null;
             }
             if(cardSelected<guardianCards.getGuardianQty()&& cardSelected>=0){
                 break;
@@ -170,15 +230,7 @@ public class GameSystemImpl implements GameSystem {
             }
         }
         guardianSelected=guardianCards.getGuardian(cardSelected);
-        if(player==1){
-            player1.getDeck().setGuardian(guardianSelected);
-            player1.getDeck().getGuardian().cardSelected();
-        }
-        else{
-            player2.getDeck().setGuardian(guardianSelected);
-            player2.getDeck().getGuardian().cardSelected();
-        }
-        
+  
         StdOut.println(" .:: Spells ::. ");
         for(int i=0;i<spellCards.getSpellQty();i++){
             StdOut.print("[" + i + "]");
@@ -193,7 +245,7 @@ public class GameSystemImpl implements GameSystem {
                 cardSelected=StdIn.readInt();
             }catch(InputMismatchException e){
                 StdOut.println("Choose an integer");
-                return false;
+                return null;
             }
             if(cardSelected<spellCards.getSpellQty() && cardSelected>=0){
                 break;
@@ -203,16 +255,10 @@ public class GameSystemImpl implements GameSystem {
             }
         }
         spellSelected=spellCards.getSpell(cardSelected);
-        if(player==1){
-            player1.getDeck().setSpell(spellSelected);
-            player1.getDeck().getSpell().cardSelected();
-        }
-        else{
-            player2.getDeck().setSpell(spellSelected);
-            player2.getDeck().getSpell().cardSelected();
-        }
-        return true;
+        newDeck= new Deck(warriorSelected,guardianSelected,spellSelected);
+        return newDeck;
     }
+    
     @Override
     public void useWarrior(int player){
         if(player==1){
@@ -224,6 +270,8 @@ public class GameSystemImpl implements GameSystem {
             
             StdOut.println(".:: "+player1.getDeck().getWarrior().getName()+
             " attacks ::.");
+            player1.dealDamage(player1.getDeck().getWarrior().getDamage());
+            
             if(player2.getDeck().getWarrior().getHp()<=0){
                 StdOut.println("Warrior is dead, the damage is dealt to the "
                         + "Hero "+player2.getAlias());
@@ -240,7 +288,7 @@ public class GameSystemImpl implements GameSystem {
             
             }
         }
-        else{
+        if(player==2){
             StdOut.println(".:: Warrior of "+ player2.getAlias()+" ::.");
             StdOut.println(player2.getDeck().getWarrior().getName()+" -> "+
             player2.getDeck().getWarrior().getRace() + " -> Hp: "    +
@@ -249,6 +297,8 @@ public class GameSystemImpl implements GameSystem {
             
             StdOut.println(".:: "+player2.getDeck().getWarrior().getName()+
             " attacks ::.");
+            player2.dealDamage(player2.getDeck().getWarrior().getDamage());
+            
             if(player1.getDeck().getWarrior().getHp()<=0){
                 StdOut.println("Warrior is dead, the damage is dealt to the "
                         + "Hero "+player1.getAlias());
@@ -259,7 +309,6 @@ public class GameSystemImpl implements GameSystem {
                 StdOut.print(player1.getDeck().getWarrior().getName()+" -> "+
                 player1.getDeck().getWarrior().getRace()+" -> "+ "Hp:"+
                 player1.getDeck().getWarrior().getHp());
-            
                 player1.getDeck().getWarrior().loseHp(player2.getDeck().getWarrior()
                 .getDamage());
             }
@@ -278,6 +327,7 @@ public class GameSystemImpl implements GameSystem {
             
             StdOut.println(".:: Attack with  "
             +player1.getDeck().getSpell().getName()+" .::");
+            player1.dealDamage(player1.getDeck().getSpell().getDamage());
             if(player2.getDeck().getWarrior().getHp()==0){
                 StdOut.println("Warrior is dead, the damage is dealt to the "
                         + "Hero "+player2.getAlias());
@@ -295,7 +345,7 @@ public class GameSystemImpl implements GameSystem {
                 player2.getDeck().getWarrior().getDamage());
             }
         }
-        else{
+        if(player==2){
             StdOut.println(".:: Spell of "+ player2.getAlias()+" ::.");
             StdOut.println(player2.getDeck().getSpell().getName()+" -> "+
             player2.getDeck().getSpell().getRarity() + " -> Damage: "+
@@ -303,6 +353,8 @@ public class GameSystemImpl implements GameSystem {
             
             StdOut.println(".:: Attack with "+player2.getDeck()
             .getSpell().getName()+ " ::.");
+            player2.dealDamage(player2.getDeck().getSpell().getDamage());
+            
             if(player1.getDeck().getWarrior().getHp()<=0){
                 StdOut.println("Warrior is dead, the damage is dealt to the "
                         + "Hero "+player1.getAlias());
@@ -325,8 +377,18 @@ public class GameSystemImpl implements GameSystem {
     }
 
     @Override
-    public void showDuelOptions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int showDuelOptions() {
+        StdOut.println("[1] Use Warrior");
+        StdOut.println("[2] Use Spell");
+        StdOut.println("[3] Use Guardian");
+        StdOut.println("Enter the option you will choose");
+        String option = StdIn.readString();
+        int validatedOption = validateGameOptions(option);
+        while(validatedOption == -1){
+            option = StdIn.readString();
+            validatedOption = validateGameOptions(option);
+        }
+        return validatedOption ;
     }
 
     @Override
@@ -340,37 +402,64 @@ public class GameSystemImpl implements GameSystem {
         for(int i=0;i<warriorCards.getWarriorQty();i++){
             if(id.equals(warriorCards.getWarrior(i).getId())){
                 StdOut.println("Name: "+ warriorCards.getWarrior(i).getName());
-                StdOut.println("Name: "+ warriorCards.getWarrior(i).getRace());
-                StdOut.println("Name: "+ warriorCards.getWarrior(i).getTimesUsed());
-                StdOut.println("Name: "+ warriorCards.getWarrior(i).getTimesDead());
+                StdOut.println("Race: "+ warriorCards.getWarrior(i).getRace());
+                StdOut.println("Times used: "+ warriorCards.getWarrior(i)
+                .getTimesUsed());
+                StdOut.println("Times dead: "+ warriorCards.getWarrior(i)
+                .getTimesDead());
                 return true;
                 
             }
         }
         for(int i=0;i<guardianCards.getGuardianQty();i++){
             if(id.equals(guardianCards.getGuardian(i).getId())){
-                
+               StdOut.println("Name: "+ guardianCards.getGuardian(i).getName());
+               StdOut.println("Race: "+ guardianCards.getGuardian(i).getRace());
+               StdOut.println("Times used: "+ guardianCards.getGuardian(i)
+               .getTimesUsed());
+                return true;
             }
         }
         for(int i=0;i<spellCards.getSpellQty();i++){
             if(id.equals(spellCards.getSpell(i).getId())){
-               StdOut.println(); 
-               StdOut.println();
-               StdOut.println();
-               StdOut.println();
+               StdOut.println("Name: "+ spellCards.getSpell(i).getName());
+               StdOut.println("Rarity: "+ spellCards.getSpell(i).getRarity());
+               StdOut.println("Times used: "+ guardianCards.getGuardian(i)
+               .getTimesUsed());
+               return true;
             }
         }
+        return false;
         //xddxd
-        return true;
     }
 
     @Override
     public void heroesThatParticipated() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(int i=0;i<heroes.getHeroQty();i++){
+            if(i == (heroes.getHeroQty())-1){
+                break;
+            }
+            else{
+             StdOut.println(heroes.getHero(i).getAlias()+" v/s " + heroes.getHero(i+1).getAlias());   
+            }
+        }
     }
 
     @Override
     public void detailsOfLastCombat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Hero firstHero = heroes.getHero((heroes.getHeroQty())-1);
+        StdOut.println("First player of the last combat " + firstHero.getAlias());
+        StdOut.println("Warrior"+firstHero.getDeck().getWarrior()+"Guardian"+firstHero.getDeck().getGuardian()+"Spell"+firstHero.getDeck().getSpell());
+        StdOut.println("Damage dealt "+firstHero.getDamageDealt());
+        Hero lastHero = heroes.getHero(heroes.getHeroQty());
+        StdOut.println("Second player of the last combat " + lastHero.getAlias());
+        StdOut.println("Warrior "+lastHero.getDeck().getWarrior()+"Guardian "+lastHero.getDeck().getGuardian()+"Spell "+lastHero.getDeck().getSpell());
+        StdOut.println(lastHero.getDamageDealt());
+        /*
+        no se si esto se ve feo pero es el mismo print que los 3 print separados
+        StdOut.println("First player of the last combat " + firstHero.getAlias()+
+        "Warrior"+firstHero.getDeck().getWarrior()+"Guardian"+firstHero.getDeck().getGuardian()
+        +"Spell"+firstHero.getDeck().getSpell()+"Damage dealt "+firstHero.getDamageDealt());
+        */
     }
 }
