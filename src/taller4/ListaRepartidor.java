@@ -13,7 +13,7 @@ public class ListaRepartidor {
     private Nodo first;
 
     public ListaRepartidor() {
-        this.first=null;
+        this.first = null;
     }
     
     public boolean insertarRepartidor(Repartidor repartidor){

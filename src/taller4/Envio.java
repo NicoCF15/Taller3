@@ -15,7 +15,6 @@ class Envio {
     private String direccionEmisor;
     private String direccionReceptor;
     private String nombreZona;
-    // aniadido despues
     private int id;
     private boolean estado;
 
@@ -85,5 +84,6 @@ class Envio {
     public void setId(int id) {
         this.id = id;
     }
+    public double calcularMontoEnvio;
     
 }

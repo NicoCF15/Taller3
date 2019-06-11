@@ -1,0 +1,7 @@
+la ratonera,amarillo,1.7
+memento,rojo,3.2
+urss,rojo,9.9
+la pedregal,verde,2.4
+chungungo,amarillo,3.1
+haiti,verde,9.6
+balmaceda,amarillo,3.7

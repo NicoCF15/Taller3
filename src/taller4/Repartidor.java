@@ -80,25 +80,7 @@ public class Repartidor {
     }
 
     public void setBicicleta(Bicicleta bicicleta) {
-        if(bicicleta.getPatente().equals(this.patente)){
-            this.bici = bicicleta;
-        }
-    }
-    // aniadido despues
-    public void setBicicleta(String patente, double costoMantencion, String tipoBicicleta){
-        /* falta costo de mantencion
-        Bicicleta bicicleta;
-        if(tipoBicicleta.equals("bicicletamontaña")){
-            
-        }
-        if(tipoBicicleta.equals("bicicletaruta")){
-            
-        }
-        if(tipoBicicleta.equals("bicicletaurbana")){
-            
-        }
         this.bici = bicicleta;
-        */
     }
 
     public void setDisponibilidad(boolean disponibilidad) {

@@ -26,26 +26,39 @@ public class SistemaEnviosImpl implements SistemaEnvios{
     private ArrayList<Envio> listaEnvios;
     private LinkedList<Zona> listaZonas;
     private ArrayList<Entrega> listaEntregas;
+    private List<Bicicleta> listaBicicletas;
 
     public SistemaEnviosImpl() {
         this.listaRepartidores = new ListaRepartidor();
         this.listaEnvios = new ArrayList<>();
         this.listaZonas = new LinkedList<>();
         this.listaEntregas = new ArrayList<>();
+        this.listaBicicletas = new LinkedList<>();
     }
     public void correrApp(){
-       almacenarInfo("Bicicletas_Urbana.txt");
-       almacenarInfo("Bicicletas_MTB.txt");
-       almacenarInfo("Bicicletas_Ruta.txt");
-       almacenarInfo("Repartidores.txt");
-       almacenarInfo("Zonas.txt");
-       /*
-       StdOut.println("Ingrese el de que tipo es su bicicleta (bicicleta urbana, de montaña o ruta)");
-       String tipo = StdIn.readString().toLowerCase().trim();
-       while(!tipo.equals("bicicletamontaña")||!tipo.equals("bicicletaruta")||!tipo.equals("bicicletaurbana")){
+        almacenarInfo("Repartidores.txt");
+        almacenarInfo("Zonas.txt");
+        almacenarInfo("Bicicletas_Urbana.txt");
+        almacenarInfo("Bicicletas_MTB.txt");
+        almacenarInfo("Bicicletas_Ruta.txt");
+        Nodo aux = this.listaRepartidores.getFirst();
+        // Se le asigna la correspondiente bicicleta a cada repartidor
+        while(aux.getSiguiente() != null){
+            for(int i = 0; i<this.listaBicicletas.size();i++){
+                if(aux.getRepartidor().getPatente().equals(this.listaBicicletas.get(i).getPatente())){
+                    aux.getRepartidor().setBicicleta(this.listaBicicletas.get(i));
+                    break;
+                }
+            }
+            aux = aux.getSiguiente();
+        }     
+        /*
+        StdOut.println("Ingrese el de que tipo es su bicicleta (bicicleta urbana, de montaña o ruta)");
+        String tipo = StdIn.readString().toLowerCase().trim();
+        while(!tipo.equals("bicicletamontaña")||!tipo.equals("bicicletaruta")||!tipo.equals("bicicletaurbana")){
             String tipo = StdIn.readString().toLowerCase().trim(); 
-       }
-       */
+        }
+        */
 }
     
     @Override
@@ -67,6 +80,9 @@ public class SistemaEnviosImpl implements SistemaEnvios{
         */
         Repartidor repartidor = new Repartidor(idRepartidor,null,0,null,null);
         boolean sePudo = this.listaRepartidores.eliminarRepartidor(repartidor);
+        for(int i=0;i<this.listaBicicletas.size();i++){
+            
+        }
         return sePudo;
     }
 
@@ -86,6 +102,7 @@ public class SistemaEnviosImpl implements SistemaEnvios{
     }
 
     @Override
+    // notificacion de datos por menu
     public boolean realizarEnvio(String nombreEmisor, String nombreReceptor, String direccionEmisor, String direccionReceptor, String zonaReceptor) {
         Nodo aux = this.listaRepartidores.getFirst();
         for(int i = 0; i<this.listaZonas.size();i++){
@@ -93,9 +110,11 @@ public class SistemaEnviosImpl implements SistemaEnvios{
                 while(aux.getRepartidor().getDisponibilidad() == false && !aux.getRepartidor().getBicicleta().getColor().equals(listaZonas.get(i).getColor())){
                     aux = aux.getSiguiente();
                     // recorrio toda la lista y no encontro la igualdad de colores
-                    if (aux.getSiguiente() == null)
+                    if (aux.getSiguiente() == null){   
                         return false;
+                    }    
                 }
+                // falta sacarle el monto al envio
                 // si salimos del while significa que se puede realizar el envio
                 Envio nuevoEnvio = new Envio(nombreEmisor,nombreReceptor,direccionEmisor,direccionReceptor,zonaReceptor);
                 aux.getRepartidor().setDisponibilidad(false);
@@ -111,20 +130,30 @@ public class SistemaEnviosImpl implements SistemaEnvios{
     }
 
     @Override
+    //falta implementar
     public void recepcionRepartidor(String idRepartidor) {
         Nodo aux = this.listaRepartidores.getFirst();
         while(aux.getSiguiente() != null){
-            if(aux.getRepartidor().getId().equals(idRepartidor)){
+            if(aux.getRepartidor().getId().equals(idRepartidor)&& aux.getRepartidor().getEnvio()!= null){
+                // El repartidor vuelve a estar disponible
                 aux.getRepartidor().setDisponibilidad(true);
+                // Se entrego el envio
                 aux.getRepartidor().getEnvio().setEstado(true);
+                // El repartidor no tiene envios vigentes
                 aux.getRepartidor().setEnvio(null);
+                // se recorre la lista para que verifique si puede tomar otro pedido en cola
                 for(int i = 0;i<this.listaEnvios.size();i++){
                     for(int j = 0;j<this.listaZonas.size();j++){
                         if(this.listaZonas.get(j).getNombre().equals(this.listaEnvios.get(i).getNombreZona())){
                             String color = this.listaZonas.get(j).getColor();
+                            // Si el envio esta en la cola y los colores de la bicicleta con la zona son ideales
+                            // hacerle los instanceof por si el juan lo dice
                             if(this.listaEnvios.get(i).getEstado() == false && aux.getRepartidor().getBicicleta().getColor().equals(color)){
+                                // asigno el envio
                                 aux.getRepartidor().setEnvio(this.listaEnvios.get(i));
+                                // lo quito de la cola
                                 aux.getRepartidor().getEnvio().setEstado(true);
+                                // cambio la disponibilidad del repartidor
                                 aux.getRepartidor().setDisponibilidad(false);
                             }
                         }
@@ -137,20 +166,35 @@ public class SistemaEnviosImpl implements SistemaEnvios{
 
     @Override
     public void cierreCaja() {
-        /*
+        
+        double gananciasTotales = 0;
         Date fecha = new Date();
         String formato = "dd/MM/YYYY HH:mm";
         SimpleDateFormat formateador = new SimpleDateFormat(formato);
         String fechaFormateada = formateador.format(fecha);
-        StdOut.println(fechaFormateada);
-        Registro registro = new Registro(3);
         try {
             ArchivoSalida archivo = new ArchivoSalida(fechaFormateada);
+            Registro registro = new Registro(3);
+            for(int i = 0; i<this.listaEnvios.size();i++){
+                Envio envioAux = this.listaEnvios.get(i);
+                String campo1 = envioAux .getId() + envioAux .getEmisor() + envioAux .getReceptor() + envioAux .getDireccionEmisor() + envioAux .getDireccionReceptor();
+                registro.agregarCampo(campo1);
+            }
+            for(int i = 0; i<this.listaEntregas.size();i++){
+                Entrega entregaAux = this.listaEntregas.get(i);
+                String campo2 = entregaAux.getRepartidor().getNombre() + entregaAux.getGanancia();
+                registro.agregarCampo(campo2);
+                gananciasTotales += entregaAux.getGanancia();
+            }
+            String campo3 = String.valueOf(gananciasTotales);
+            registro.agregarCampo(campo3);
+            archivo.writeRegistro(registro);
+            archivo.close();
         } 
         catch (IOException e) {
-            StdOut.println("No se pudo crear el archivo");
+            StdOut.println("Lo sentimos, no se pudo crear el archivo");
         }
-        */
+        
     }
 
     @Override
@@ -172,33 +216,23 @@ public class SistemaEnviosImpl implements SistemaEnvios{
                 datos de la bicicleta*/
                 if(campo3 == null && campo4 == null && campo5 == null){
                     String patente = campo1;
-                    double costoMantencion = Double.parseDouble(campo2);                    
-                    Nodo aux = this.listaRepartidores.getFirst();
-                    // habria que almacenarlos en un arraylist o linkedlist
-                    // habria que almacenar las bicis para recorrerlas comparando patentes y un set bicicleta al repartidor
-                    // otra manera seria recorrer la lista de repartidores y preguntar por la patente y hacerle el set(o un for)
-                    while(aux.getSiguiente() != null){
-                        if(nombreArchivo.equals("Bicicletas_Urbana.txt")){
+                    int costoMantencion = Integer.parseInt(campo2);  
+                    if(nombreArchivo.equals("Bicicletas_Urbana.txt")){
                             Bicicleta biciUrbana = new BicicletaUrbana(costoMantencion,patente);
-                            aux.getRepartidor().setBicicleta(biciUrbana);
-                            break;
-                        }
-                        if(nombreArchivo.equals("Bicicletas_MTB.txt")){
+                            this.listaBicicletas.add(biciUrbana);
+                    }
+                    if(nombreArchivo.equals("Bicicletas_MTB.txt")){
                             Bicicleta biciMTB = new MTB(costoMantencion,patente);
-                            aux.getRepartidor().setBicicleta(biciMTB);
-                            break;
-                        }
-                        if(nombreArchivo.equals("Bicicletas_Ruta.txt")){
+                            this.listaBicicletas.add(biciMTB);
+                    }
+                    if(nombreArchivo.equals("Bicicletas_Ruta.txt")){
                             Bicicleta biciRuta = new BicicletaRuta(costoMantencion,patente);
-                            aux.getRepartidor().setBicicleta(biciRuta);
-                            break;
-                        }
-                        aux = aux.getSiguiente();
+                            this.listaBicicletas.add(biciRuta);
                     }
                 }
                 /* En cambio, si el archivo contiene 3 campos, esta abriendo un 
                 archivo con los datos de las zonas*/
-                if(campo4 == null && campo5 == null){
+                if(campo3 != null && campo4 == null && campo5 == null){
                     String nombreZona = campo1;
                     String color = campo2;
                     double tasaEnvio = Double.parseDouble(campo3);
@@ -217,6 +251,7 @@ public class SistemaEnviosImpl implements SistemaEnvios{
                     this.listaRepartidores.insertarRepartidor(repartidor);
                 }
             }
+            archivo.close();
         }
         catch(IOException e){
             StdOut.println("Lo sentimos, el archivo que trata de abrir lamentablemente no existe");
