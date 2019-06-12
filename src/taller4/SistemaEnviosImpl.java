@@ -71,18 +71,41 @@ public class SistemaEnviosImpl implements SistemaEnvios{
     }
 
     @Override
-    public void modificarRepartidor(String idRepartidor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void modificarRepartidor(String idRepartidor,String nombre, int edad, String direccion) 
+    {
+        // Como ya se valido anteriormente no se valida denuevo, solo se busca
+        Nodo nodoCambio = listaRepartidores.getFirst();
+        while(!nodoCambio.getRepartidor().getId().equalsIgnoreCase(idRepartidor)){
+            nodoCambio = nodoCambio.getSiguiente();
+        }
+        
+        nodoCambio.getRepartidor().setNombre(nombre);
+        nodoCambio.getRepartidor().setEdad(edad);
+        nodoCambio.getRepartidor().setDireccion(direccion);
+        
+        
     }
 
     @Override
-    public void modificarPatente(String patenteNueva) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void modificarPatente(String idRepartidor,String patenteNueva) {
+        Nodo nodoCambio = listaRepartidores.getFirst();
+        while(!nodoCambio.getRepartidor().getId().equalsIgnoreCase(idRepartidor)){
+            nodoCambio = nodoCambio.getSiguiente();
+        }
+        nodoCambio.getRepartidor().getBicicleta().setPatente(patenteNueva);
+        
     }
 
     @Override
-    public void cambiarBicicleta(String patente, String tipo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void cambiarBicicleta(String idRepartidor,double CostoMantencion,String patente, String tipo) {
+        if(tipo.equalsIgnoreCase("amarillo")){
+            BicicletaRuta nuevaBicicleta = new BicicletaRuta()
+        } 
+        Nodo nodoCambio = listaRepartidores.getFirst();
+        while(!nodoCambio.getRepartidor().getId().equalsIgnoreCase(idRepartidor)){
+            nodoCambio = nodoCambio.getSiguiente();
+        }
+        nodoCambio.getRepartidor().getBicicleta()       
     }
 
     @Override
@@ -221,5 +244,18 @@ public class SistemaEnviosImpl implements SistemaEnvios{
         catch(IOException e){
             StdOut.println("Lo sentimos, el archivo que trata de abrir lamentablemente no existe");
         }
+    }
+    public boolean existeRepartidor(String id){
+        Nodo aux = listaRepartidores.getFirst();
+        
+        if(aux==null){
+            return false;
+        }
+        
+        while(!aux.getRepartidor().getId().equalsIgnoreCase(id) && aux.getSiguiente()!=null){
+            aux = aux.getSiguiente();
+        }
+        
+        return aux.getSiguiente() != null;
     }
 }

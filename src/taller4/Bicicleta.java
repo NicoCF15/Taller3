@@ -14,10 +14,9 @@ public abstract class Bicicleta {
     protected String patente;
     protected String color;
 
-    public Bicicleta(double costoMantencion, String patente) {
+    protected Bicicleta(double costoMantencion, String patente) {
         this.costoMantencion = costoMantencion;
         this.patente = patente;
-        this.color = color;
     }
 
     public double getCostoMantencion() {
@@ -31,6 +30,11 @@ public abstract class Bicicleta {
     public String getColor() {
         return color;
     }
+
+    public void setPatente(String patente) {
+        this.patente = patente;
+    }
+    
     
 
     public abstract double calcularCostoMantencion(double costoMantencion);
