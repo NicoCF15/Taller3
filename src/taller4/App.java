@@ -9,6 +9,7 @@ import ucn.ArchivoEntrada;
 import ucn.Registro;
 import ucn.StdIn;
 import ucn.StdOut;
+import java.util.InputMismatchException;
 /**
  *
  * @author ncofr
@@ -23,6 +24,8 @@ public class App {
             optionElegida = menu();
             
             if(optionElegida==1){
+                Repartidor nuevoRepartidor = pedirDatosRepartidor();
+                sistema.contratarRepartidor(nuevoRepartidor);
                 
             }
             if(optionElegida==2){
@@ -30,7 +33,20 @@ public class App {
             }
             if(optionElegida==3){
                 
-                StdOut.println("Ingrese id del repartidor a modificar");
+                modificarRepartidor(sistema);
+
+            }
+            if(optionElegida==4){
+            }
+            if(optionElegida==5){
+            }
+            if(optionElegida==6){
+                
+            }
+        }
+    }
+    public static void modificarRepartidor(SistemaEnviosImpl sistema){
+        StdOut.println("Ingrese id del repartidor a modificar");
                 String idCambio= StdIn.readString();
                 boolean existeId = sistema.existeRepartidor(idCambio);
                 if(existeId)
@@ -68,7 +84,12 @@ public class App {
                         
                         StdOut.println("Ingrese patente de la nueva bicicleta");
                         String patenteNuevaBicicleta= StdIn.readString();
-                        
+                        StdOut.println("Ingrese el costo de mantencion de la bicicleta");
+                        double costoDeMantencionBiciNueva = ingresarDouble();   
+                        while(costoDeMantencionBiciNueva!= -1 && costoDeMantencionBiciNueva>0 ){
+                            costoDeMantencionBiciNueva= ingresarDouble();
+                        }
+                                
                         StdOut.println("De que tipo es la nueva bicicleta?");
                         StdOut.println("[1] Bicicleta de ruta");
                         StdOut.println("[2] Bicicleta urbana");
@@ -82,15 +103,15 @@ public class App {
                             // valida que la opcion elegida este entre el rango de opciones
                         }
                         if(opcionElegidaSubmenuDelsubMenu==1){
-                            sistema.cambiarBicicleta(idCambio, patenteNuevaBicicleta,"amarillo");
+                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva, patenteNuevaBicicleta,"amarillo");
                             StdOut.println("Cambio realizado con exito");
                         }
                         if(opcionElegidaSubmenuDelsubMenu==2){
-                            sistema.cambiarBicicleta(idCambio, patenteNuevaBicicleta,"verde");
+                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva, patenteNuevaBicicleta,"verde");
                             StdOut.println("Cambio realizado con exito");
                         }
                         if(opcionElegidaSubmenuDelsubMenu==2){
-                            sistema.cambiarBicicleta(idCambio, patenteNuevaBicicleta,"rojo");
+                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva ,patenteNuevaBicicleta,"rojo");
                             StdOut.println("Cambio realizado con exito");
                         }
                     }   
@@ -99,18 +120,6 @@ public class App {
                     StdOut.println("No existe id del repartidor que desea modificar");
                     
                 }
-                
-
-
-            }
-            if(optionElegida==4){
-            }
-            if(optionElegida==5){
-            }
-            if(optionElegida==6){
-                
-            }
-        }
     }
         
     /**
@@ -118,12 +127,12 @@ public class App {
      * @return
      */
     public static Repartidor pedirDatosRepartidor(){
-        StdOut.println("Ingrese nombre del repartidor");
+        StdOut.println("Ingrese nombre del repartidor");//falta ver si existe o no el nombre
         String nombreRepartidor = StdIn.readString();
         StdOut.println("Ingrese rut del repartidor, sin el guion");
-        String rut = StdIn.readString();
+        String rut = StdIn.readString(); //falta ver si se repite rut
         StdOut.println("Ingrese edad del repartidor");
-        boolean esNumero = true;
+        boolean esNumero = false;
         int edad;
         String numero;
         while(!esNumero){
@@ -137,7 +146,31 @@ public class App {
         String patente = StdIn.readString();
         Repartidor nuevoRepartidor = new Repartidor(rut,nombreRepartidor,
         edad,direccion,patente);
+        StdOut.println("Ingrese el tipo de bicicleta del repartidor(ruta, montania o urbana)");
         
+        String tipoBicicleta= StdIn.readString();
+        while(!tipoBicicleta.equals("ruta") || !tipoBicicleta.equals("montania")
+                || !tipoBicicleta.equals("urbana")){
+            StdOut.println("Ingrese tipo de bicicleta valido");
+            tipoBicicleta = StdIn.readString();
+        }
+        double costoMantencion= ingresarDouble();
+        while(costoMantencion>0){
+            StdOut.println("Ingrese costo valido mayor a 0");
+            costoMantencion= ingresarDouble();
+
+        }
+        Bicicleta bicicletaRepartidor;
+        if(tipoBicicleta.equalsIgnoreCase("amarillo")){
+            bicicletaRepartidor = new BicicletaRuta(costoMantencion, patente);
+        } 
+        if(tipoBicicleta.equalsIgnoreCase("verde")){
+            bicicletaRepartidor = new BicicletaUrbana(costoMantencion, patente);
+        }
+        if(tipoBicicleta.equalsIgnoreCase("rojo")){
+            bicicletaRepartidor = new MTB(costoMantencion, patente);
+        } 
+        nuevoRepartidor.setBicicleta(bicicletaRepartidor);
         return nuevoRepartidor;
     }
     public static boolean validarNumero(String numero){
@@ -197,6 +230,16 @@ public class App {
                 StdOut.println("Ingrese un numero porfavor");
                 return -1;
             }
+    }
+    public static double ingresarDouble(){
+        double valor;
+        try{
+            valor = StdIn.readDouble();
+        }catch(InputMismatchException  e){
+            return -1;
         }
+        return valor;
+    }
+    
 }
 

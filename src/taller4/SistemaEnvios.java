@@ -10,13 +10,11 @@ package taller4;
  * @author ncofr
  */
 public interface SistemaEnvios {
-    public void contratarRepartidor(String nombreRepartidor, int edadRepartidor, 
-            String direccionRepartidor, String idRepartidor, String tipoBicicleta, 
-            String patenteBicicleta );
+    public void contratarRepartidor(Repartidor nuevoRepartidor );
     public boolean despedirRepartidor(String idRepartidor);
     public void modificarRepartidor(String idRepartidor,String nombre, int edad, String direccion);
     public void modificarPatente(String idRepartidor, String patenteNueva);
-    public void cambiarBicicleta(String idRepartidor,String patente, String tipo);
+    public void cambiarBicicleta(String idRepartidor,double costoDeMantencion,String patente, String tipo);
     public boolean realizarEnvio(String nombreEmisor, String nombreReceptor, 
             String direccionEmisor, String direccionReceptor, String zonaReceptor);
     public void recepcionRepartidor(String idRepartidor);
