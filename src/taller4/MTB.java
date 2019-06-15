@@ -16,8 +16,8 @@ public class MTB extends Bicicleta{
         this.color = "rojo";
     }   
     @Override
-    public double calcularCostoMantencion(double costoMantencion){
-        double costo = 5000 + costoMantencion;
+    public double calcularCostoMantencion(){
+        double costo = 5000 + this.costoMantencion;
         return costo;
     }
 }

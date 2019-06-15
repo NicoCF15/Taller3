@@ -15,6 +15,8 @@ class Envio {
     private String direccionEmisor;
     private String direccionReceptor;
     private String nombreZona;
+    private Repartidor repartidor;
+    private double montoEnvio;
     private int id;
     private boolean estado;
 
@@ -24,6 +26,7 @@ class Envio {
         this.direccionEmisor = direccionEmisor;
         this.direccionReceptor = direccionReceptor;
         this.nombreZona = nombreZona;
+        this.repartidor = null;
         this.id = 0;
         // al crear un envio, este se encuentra en la cola
         this.estado = false;
@@ -53,8 +56,16 @@ class Envio {
         return id;
     }
 
+    public double getMontoEnvio() {
+        return montoEnvio;
+    }
+    
     public boolean getEstado() {
         return estado;
+    }
+
+    public Repartidor getRepartidor() {
+        return repartidor;
     }
 
     public void setEmisor(String emisor) {
@@ -84,6 +95,14 @@ class Envio {
     public void setId(int id) {
         this.id = id;
     }
-    public double calcularMontoEnvio;
+
+    public void setRepartidor(Repartidor repartidor) {
+        this.repartidor = repartidor;
+    }
+    
+    public void calcularMontoEnvio(double tasaEnvio, double costoMantencionAplicado){
+        double montoEnvio = (tasaEnvio * costoMantencionAplicado) * 0.8;
+        this.montoEnvio = montoEnvio;
+    }
     
 }

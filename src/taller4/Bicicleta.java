@@ -31,7 +31,10 @@ public abstract class Bicicleta {
     public String getColor() {
         return color;
     }
-    
 
-    public abstract double calcularCostoMantencion(double costoMantencion);
+    public void setPatente(String patente) {
+        this.patente = patente;
+    }
+
+    public abstract double calcularCostoMantencion();
 }

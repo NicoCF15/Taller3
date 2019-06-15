@@ -14,7 +14,6 @@ public class Repartidor {
     private String nombre;
     private int edad;
     private String direccion;
-    //aniadido despues
     private String patente;
     private Bicicleta bici;
     private Envio envio;

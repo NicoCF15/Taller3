@@ -17,8 +17,8 @@ public class BicicletaUrbana extends Bicicleta{
     }
 
     @Override
-    public double calcularCostoMantencion(double costoMantencion) {
-        double costo = costoMantencion * 1.5;
+    public double calcularCostoMantencion() {
+        double costo = this.costoMantencion * 1.5;
         return costo;
     }
     
