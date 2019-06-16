@@ -345,28 +345,42 @@ public class SistemaEnviosImpl implements SistemaEnvios{
             return false;
         }
 
-        while(!aux.getRepartidor().getId().equalsIgnoreCase(id) && aux.getSiguiente()!=null){
+        while(!aux.getRepartidor().getId().equals(id) && aux.getSiguiente() != null){
+            
             aux = aux.getSiguiente();
+            
         }
-
-        return aux.getSiguiente() != null;
+        StdOut.println(aux.getRepartidor().getId());
+        return aux.getRepartidor().getId().equals(id);
     }
-    public boolean validarDatos(String datos){
+    public boolean validarDatos(String datos,String tipo){
         Nodo aux = listaRepartidores.getFirst();
         while(aux.getSiguiente() != null){
-            if(aux.getRepartidor().getNombre().equalsIgnoreCase(datos)){
+            
+            if(aux.getRepartidor().getNombre().equals(datos) && tipo.equals("nombreRepartidor")){
                 StdOut.println("El repartidor ya se encuentra en el sistema, porfavor vuelva a intentarlo");
                 return false;
             }
-            if(aux.getRepartidor().getId().equalsIgnoreCase(datos)){
-                StdOut.println("Id existente, porfavor ingrese id valida (rut sin guion ni digito verificador)");
+            if(aux.getRepartidor().getId().equalsIgnoreCase(datos) && tipo.equalsIgnoreCase("idRepartidor")){
+                StdOut.println("Id existente, porfavor ingrese id valida (rut  sin guion ni digito verificador)");
                 return false;
             }
-            if(aux.getRepartidor().getPatente().equalsIgnoreCase(datos)){
+            if(aux.getRepartidor().getPatente().equalsIgnoreCase(datos) && tipo.equalsIgnoreCase("Patente")){
                 StdOut.println("Patente existente, porfavor ingrese patente valida");
                 return false;
             }
-            aux.getSiguiente();
+ 
+            aux = aux.getSiguiente();
+        }
+        
+        if(tipo.equals("nombreRepartidor")){
+            return !aux.getRepartidor().getNombre().equals(datos);
+        }
+        if(tipo.equals("idRepartidor")){
+            return !aux.getRepartidor().getId().equals(datos);
+        }
+        if(tipo.equals("Patente")){
+            return !aux.getRepartidor().getPatente().equals(datos);
         }
         return true;
     }

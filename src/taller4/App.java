@@ -30,7 +30,7 @@ public static void main(String[] args) {
 
             }
             if(optionElegida==2){
-                StdOut.println("Ingrese rut ");
+                StdOut.println("Ingrese id ");
                 String id = StdIn.readString();
                 boolean seElimino = sistema.despedirRepartidor(id);
                 if(seElimino = false){
@@ -78,7 +78,7 @@ public static void main(String[] args) {
                     StdOut.println(aux.getRepartidor().getBicicleta().getColor());
                     StdOut.println(aux.getRepartidor().getEnvio());
                     aux = aux.getSiguiente();
-                    }
+                }
                 StdOut.println(aux.getRepartidor().getNombre());
                 StdOut.println(aux.getRepartidor().getDireccion());
                 StdOut.println(aux.getRepartidor().getEdad());
@@ -124,21 +124,42 @@ public static void main(String[] args) {
                     }
                     if(opcionElegidaSubmenu==1){
                         StdOut.println("Ingrese el nuevo nombre");
-                        String nombre = StdIn.readString(); //falta verificar que no exista el nombre ingresado
+                        String nombreRepartidor = StdIn.readString();
+                        boolean nombreValido = sistema.validarDatos(nombreRepartidor,"nombreRepartidor");
+                        StdOut.println(nombreValido);
+                        while(!nombreValido){
+                            StdOut.println("Nombre ya existe, elija otro");
+                            nombreRepartidor = StdIn.readLine();
+                            nombreRepartidor = StdIn.readLine();
+                            nombreValido = sistema.validarDatos(nombreRepartidor,"nombreRepartidor");
+                        }
                         StdOut.println("Ingrese nueva edad");
-                        int edad = StdIn.readInt();//falta validar
+                        boolean esNumero = false;
+                        int edad;
+                        String numero = "xd";
+                        while(!esNumero){
+                            numero = StdIn.readString();
+                            esNumero = validarNumero(numero);
+                        }
+                        edad = Integer.parseInt(numero); //numero
                         StdOut.println("Ingrese calle ");
                         String nombreCalle = StdIn.readString();
                         StdOut.println("Ingrese N° de calle");
                         String numeroCalle = StdIn.readString();
                         String direccion = nombreCalle + " " + numeroCalle;
 
-                        sistema.modificarRepartidor(idCambio,nombre,edad,direccion);
+                        sistema.modificarRepartidor(idCambio,nombreRepartidor,edad,direccion);
                         StdOut.println("Cambios registrados en el sistema");
                     }
                     if(opcionElegidaSubmenu==2){
                         StdOut.println("Ingrese nueva patente");
                         String nuevaPatente = StdIn.readString();
+                        boolean patenteValida = sistema.validarDatos(nuevaPatente,"Patente");
+                        while(!patenteValida){
+                            StdOut.println("Patente ya existente, intentelo denuevo");
+                            nuevaPatente = StdIn.readString();
+                            patenteValida =sistema.validarDatos(nuevaPatente,"Patente");
+                        }
                         sistema.modificarPatente(idCambio,nuevaPatente);
                         StdOut.println("Cambios registrados en el sistema");
 
@@ -147,12 +168,27 @@ public static void main(String[] args) {
 
                         StdOut.println("Ingrese patente de la nueva bicicleta");
                         String patenteNuevaBicicleta= StdIn.readString();
-                        StdOut.println("Ingrese el costo de mantencion de la bicicleta");
-                        double costoDeMantencionBiciNueva = ingresarDouble();   
-                        while(costoDeMantencionBiciNueva!= -1 && costoDeMantencionBiciNueva<0 ){
-                            StdOut.println("Ingrese el costo de mantencion de la bicicleta");
-                            costoDeMantencionBiciNueva = ingresarDouble();
+                        boolean patenteValida = sistema.validarDatos(patenteNuevaBicicleta,"Patente");
+                        while(!patenteValida){
+                            StdOut.println("Patente ya existente, intentelo denuevo");
+                            patenteNuevaBicicleta = StdIn.readString();
+                            patenteValida =sistema.validarDatos(patenteNuevaBicicleta,"Patente");
                         }
+                        StdOut.println("Ingrese el costo de mantencion de la bicicleta");
+                        
+                        
+                        double costoMantencion;
+                        String StringcostoMantencion= StdIn.readString();
+                        boolean costoValido = ingresarDouble(StringcostoMantencion);
+  
+                        while(!costoValido){
+                            StdOut.println("Ingrese costo adecuado");
+                            StringcostoMantencion= StdIn.readString();
+                            costoValido = ingresarDouble(StringcostoMantencion);
+                    
+                        }
+                        costoMantencion = Double.parseDouble(StringcostoMantencion);
+         
 
                         StdOut.println("De que tipo es la nueva bicicleta?");
                         StdOut.println("[1] Bicicleta de ruta");
@@ -167,13 +203,13 @@ public static void main(String[] args) {
                             // valida que la opcion elegida este entre el rango de opciones
                         }
                         if(opcionElegidaSubmenuDelsubMenu==1){
-                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva, patenteNuevaBicicleta,"amarillo");
+                            sistema.cambiarBicicleta(idCambio,costoMantencion, patenteNuevaBicicleta,"amarillo");
                         }
                         if(opcionElegidaSubmenuDelsubMenu==2){
-                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva, patenteNuevaBicicleta,"verde");
+                            sistema.cambiarBicicleta(idCambio,costoMantencion, patenteNuevaBicicleta,"verde");
                         }
                         if(opcionElegidaSubmenuDelsubMenu==2){
-                            sistema.cambiarBicicleta(idCambio,costoDeMantencionBiciNueva ,patenteNuevaBicicleta,"rojo");
+                            sistema.cambiarBicicleta(idCambio,costoMantencion ,patenteNuevaBicicleta,"rojo");
                         }
                         StdOut.println("Cambio realizado con exito");
                     }   
@@ -192,8 +228,24 @@ public static void main(String[] args) {
     public static Repartidor pedirDatosRepartidor(SistemaEnviosImpl sistema){
         StdOut.println("Ingrese nombre del repartidor");//falta ver si existe o no el nombre
         String nombreRepartidor = StdIn.readString();
-        StdOut.println("Ingrese rut del repartidor, sin el guion");
-        String rut = StdIn.readString(); //falta ver si se repite rut
+        boolean nombreValido = sistema.validarDatos(nombreRepartidor,"nombreRepartidor");
+        StdOut.println(nombreValido);
+        while(!nombreValido){
+            StdOut.println("Nombre ya existe, elija otro");
+            nombreRepartidor = StdIn.readLine();
+            nombreRepartidor = StdIn.readLine();
+            nombreValido = sistema.validarDatos(nombreRepartidor,"nombreRepartidor");
+        }
+        StdOut.println("Ingrese rut del repartidor sin guion ni digito verificador");
+        String id = StdIn.readString(); 
+        boolean idValida = sistema.validarDatos(id,"idRepartidor");
+        while(!idValida){
+            StdOut.println("id ya existente, intentelo denuevo");
+            id = StdIn.readString();
+            idValida =sistema.validarDatos(id,"idRepartidor");
+        }
+        
+        
         StdOut.println("Ingrese edad del repartidor");
         boolean esNumero = false;
         int edad;
@@ -207,38 +259,51 @@ public static void main(String[] args) {
         String direccion= StdIn.readString();
         StdOut.println("Ingrese patente asociada a su bicicleta");
         String patente = StdIn.readString();
-        Repartidor nuevoRepartidor = new Repartidor(rut,nombreRepartidor,
+        boolean patenteValida = sistema.validarDatos(patente,"Patente");
+        while(!patenteValida){
+            StdOut.println("Patente ya existente, intentelo denuevo");
+            patente = StdIn.readString();
+            patenteValida =sistema.validarDatos(patente,"Patente");
+        }
+        Repartidor nuevoRepartidor = new Repartidor(id,nombreRepartidor,
         edad,direccion,patente);
         StdOut.println("Ingrese el tipo de bicicleta del repartidor(ruta, montania o urbana)");
         String tipoBicicleta;
         while(true){
             tipoBicicleta = StdIn.readString();
-            if(tipoBicicleta.equalsIgnoreCase("ruta") || tipoBicicleta.equalsIgnoreCase("Urbana") || tipoBicicleta.equalsIgnoreCase("MTB")){
+            if(tipoBicicleta.equalsIgnoreCase("ruta") || tipoBicicleta.equalsIgnoreCase("urbana") || tipoBicicleta.equalsIgnoreCase("montania")){
                 break;
             } 
             StdOut.println("Ingrese tipo de bicicleta valido");
         }
         
         StdOut.println("Ingrese costo de mantencion de la bicicleta");
-        double costoMantencion= ingresarDouble();
-        while(costoMantencion<0){
-            StdOut.println("Ingrese costo valido mayor a 0");
-            costoMantencion= ingresarDouble();
-        }
+        boolean costoValido;
+        double costoMantencion;
+        String StringcostoMantencion= StdIn.readString();
+        costoValido = ingresarDouble(StringcostoMantencion);
+  
+        while(!costoValido){
+            StdOut.println("Ingrese costo adecuado");
+            StringcostoMantencion= StdIn.readString();
+            costoValido = ingresarDouble(StringcostoMantencion);
         
-        Bicicleta bicicletaRepartidor;
+        }
+        costoMantencion = Double.parseDouble(StringcostoMantencion);
+         
         if(tipoBicicleta.equalsIgnoreCase("ruta")){
-            bicicletaRepartidor = new BicicletaRuta(costoMantencion, patente);
+             Bicicleta bicicletaRepartidor = new BicicletaRuta(costoMantencion, patente);
             nuevoRepartidor.setBicicleta(bicicletaRepartidor);
         } 
-        if(tipoBicicleta.equalsIgnoreCase("Urbana")){
-            bicicletaRepartidor = new BicicletaUrbana(costoMantencion, patente);
+        if(tipoBicicleta.equalsIgnoreCase("urbana")){
+             Bicicleta bicicletaRepartidor = new BicicletaUrbana(costoMantencion, patente);
             nuevoRepartidor.setBicicleta(bicicletaRepartidor);
         }
-        if(tipoBicicleta.equalsIgnoreCase("MTB")){
-            bicicletaRepartidor = new MTB(costoMantencion, patente);
+        if(tipoBicicleta.equalsIgnoreCase("montania")){
+            Bicicleta bicicletaRepartidor = new MTB(costoMantencion, patente);
             nuevoRepartidor.setBicicleta(bicicletaRepartidor);
         } 
+        
         return nuevoRepartidor;
     }
     public static boolean validarNumero(String numero){
@@ -301,33 +366,16 @@ public static void main(String[] args) {
                 return -1;
             }
     }
-    public static double ingresarDouble(){
-        double valor;
+    public static boolean ingresarDouble(String valor){
+       
         try{
-            valor = StdIn.readDouble();
-            return valor;
-        }catch(InputMismatchException  e){
-            return -1;
+            double valorDouble;
+            valorDouble= Double.parseDouble(valor);
+            return true;
+        }catch(NumberFormatException  e){
+            return false;
         }
     }
-    // ver mañana
-    public static String validarId(String id, ListaRepartidor repartidores){
-        Nodo auxRepartidor = repartidores.getFirst();
-        while(auxRepartidor.getSiguiente() != null){
-            if(id.equalsIgnoreCase(auxRepartidor.getRepartidor().getId()) || id.equalsIgnoreCase(auxRepartidor.getSiguiente().getRepartidor().getId())){
-                return "-1";
-            }
-            if(auxRepartidor.getSiguiente().getSiguiente() == null){
-                /*
-                while(true){
-                String idValidada = StdIn.readString();
-                if(!idValidada.equalsIgnoreCase(auxRepartidor.getRepartidor().getId())){
-                    return idValidada;
-                }
-                }
-                */
-            }
-        }
-        return id;
-    }
+
+    
 }
